@@ -5,6 +5,11 @@ services:
     container_name: 'pg-proxy'
     networks:
       - nearby-network
+  gallery-mongo:
+    image: mongo:3.6
+    container_name: 'gallery-mongo'
+    networks:
+      - nearby-network
   nearby:
     image: nearby
     container_name: 'nearby-proxy'
@@ -15,6 +20,15 @@ services:
     environment:
       PG_HOST: 'pg'
       PG_USER: 'postgres'
+  gallery:
+    image: mermanly/gallery
+    container_name: 'gallery-proxy'
+    depends_on: 
+      - gallery-mongo
+    networks:
+      - nearby-network
+    environment:
+      DATABASE_HOST: 'gallery-mongo'
   nginx:
     image: js-nginx
     container_name: 'proxy'
@@ -24,6 +38,7 @@ services:
       - nearby
       - pg
       - node-proxy
+      - gallery
     networks:
       - nearby-network
   node-proxy:
