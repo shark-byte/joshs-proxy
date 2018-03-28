@@ -1,0 +1,36 @@
+version: "3"
+services:
+  pg:
+    image: postgis-debian
+    container_name: 'pg-proxy'
+    networks:
+      - nearby-network
+  nearby:
+    image: nearby
+    container_name: 'nearby-proxy'
+    depends_on:
+      - pg
+    networks:
+      - nearby-network
+    environment:
+      PG_HOST: 'pg'
+      PG_USER: 'postgres'
+  nginx:
+    image: js-nginx
+    container_name: 'proxy'
+    ports:
+      - "80:8888"
+    depends_on:
+      - nearby
+      - pg
+      - node-proxy
+    networks:
+      - nearby-network
+  node-proxy:
+    image: node-proxy
+    container_name: 'node-proxy'
+    networks:
+      - nearby-network
+networks:
+  nearby-network:
+    driver: bridge
