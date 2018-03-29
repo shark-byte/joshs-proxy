@@ -10,6 +10,18 @@ services:
     container_name: 'gallery-mongo'
     networks:
       - nearby-network
+  #
+  #   
+  #
+  # REMEMBER TO CHANGE THIS LATER
+  #
+  #
+  #
+  database:
+    image: mongo:3.6
+    container_name: 'sidebar-mongo-proxy'
+    networks:
+      - nearby-network
   nearby:
     image: nearby
     container_name: 'nearby-proxy'
@@ -29,6 +41,13 @@ services:
       - nearby-network
     environment:
       DATABASE_HOST: 'gallery-mongo'
+  sidebar:
+    image: james9446/sidebar:side_bar
+    container_name: 'sidebar-proxy'
+    networks:
+      - nearby-network
+    environment:
+      DATABASE_HOST: 'sidebar-mongo'
   nginx:
     image: js-nginx
     container_name: 'proxy'
